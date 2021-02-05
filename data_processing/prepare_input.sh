@@ -8,6 +8,9 @@ T1_ATLAS_PATH=$4
 T1_ATLAS_2_5_PATH=$5
 RESULTS_PATH=$6
 
+
+cwd=$(pwd)
+
 echo -------
 echo INPUTS:
 echo Distorted b0 path: $B0_D_PATH
@@ -16,8 +19,13 @@ echo T1 atlas path: $T1_ATLAS_PATH
 echo T1 2.5 iso atlas path: $T1_ATLAS_2_5_PATH
 echo Results path: $RESULTS_PATH
 
+
 # Create temporary job directory
-JOB_PATH=$(mktemp -d)
+# modified to a tmp dir in cwd
+mkdir -p "${cwd}/tmp"
+
+JOB_PATH="${cwd}/tmp"
+
 echo -------
 echo Job directory path: $JOB_PATH
 
@@ -70,7 +78,7 @@ eval $C3D_CMD
 echo -------
 echo ANTS syn registration
 ANTS_OUT=$JOB_PATH/ANTS
-ANTS_CMD="antsRegistrationSyNQuick.sh -d 3 -f $T1_ATLAS_PATH -m $T1_PATH -o $ANTS_OUT"
+ANTS_CMD="antsRegistrationSyNQuick.sh -d 3 -f $T1_ATLAS_PATH -m $T1_PATH -o $ANTS_OUT -n 30"
 echo $ANTS_CMD
 eval $ANTS_CMD
 
@@ -124,4 +132,4 @@ cp $B0_D_NONLIN_ATLAS_2_5_PATH $RESULTS_PATH
 # Delete job directory
 echo -------
 echo Removing job directory...
-rm -rf $JOB_PATH
+# rm -rf $JOB_PATH
